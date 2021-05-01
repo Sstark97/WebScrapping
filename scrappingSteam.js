@@ -17,9 +17,11 @@ bot.on("message", async message => {
     const args = message.content.slice(prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
     const stop = args.pop();
+    
 
     if (command === "help") {
-        message.channel.send("**Hola! Tu bot está perfectamente recibiendo mensajes.**\n¿Tienes dudas sobre como modificarlo más? Visita la documentación: https://scripthubteam.github.io/docs/#/js/discord-js")
+        message.reply(`:man_raising_hand:`);
+        message.channel.send( "**Hola! Tu bot está esperando un comando.**\n¿Tienes dudas?\n Para usarlos solo tienes que:\n$action [number]\n$roguelike [number]")
         return;
     } else if (command === "action") {
         console.log(stop);
@@ -92,4 +94,4 @@ bot.on("message", async message => {
     }
 })
 
-bot.login("AQUI TOKEN")
+bot.login("token")
