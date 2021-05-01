@@ -2,28 +2,9 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const disc = require('discord.js')
 
-const urlGene = "https://store.steampowered.com/category/action";
+const urlGene = "https://store.steampowered.com/category/";
 const category = process.argv[1]
 let games = [];
-
-// axios.get(`${urlGene}/${category}`).then(async response => response.data)
-//     .then(body => {
-//         const $ = cheerio.load(body);
-//         const gameNames = $('.tab_item_name');
-//         const pictureGames = $('.tab_item_cap_img');
-//         // const link = selector.attr("href").trim();
-//         // const link = $('.tab_item   ')
-//         // const pictureGames = $('.tab_item_cap>img:nth-child(1)');
-//         const priceGames = $('.discount_final_price');
-//         // console.log($(pictureGames).html());
-//         // console.log(link.attr('href'));
-//         gameNames.each((index, gameName) => {
-//             games.push({ gameName: $(gameName).text(), pictureGames: $(pictureGames[index]).attr('src'), priceGames: $(priceGames[index]).text() });
-//         });
-//         console.log(games);
-//     });
-
-// --------------------------------------------------------------------------------------------
 
 const bot = new disc.Client();
 
@@ -46,7 +27,7 @@ bot.on("message", async message => {
             message.channel.send(`Introduce a limit: $action [number]`)
             return;
         } else {
-            axios.get(urlGene).then(response => response.data)
+            axios.get(urlGene+"action").then(response => response.data)
             .then(body => {
                 const $ = cheerio.load(body);
                 const gameNames = $('.tab_item_name');
@@ -59,6 +40,7 @@ bot.on("message", async message => {
 
                 let limit = +stop;
                 let last = 0;
+                message.channel.send(`**These are the top ${limit}**`);
                 games.map(game => {
                     if(last === limit){
                         return;
@@ -68,12 +50,46 @@ bot.on("message", async message => {
                     message.channel.send(msg)
                     return;
                 })
-                message.channel.send(`These are the top ${limit}`)
-                return;
+                // message.channel.send(`These are the top ${limit}`)
+                // return;
+            });
+        }
+        
+    }else if (command === "roguelike") {
+        console.log(stop);
+        if(typeof stop === 'undefined'){
+            message.channel.send(`Introduce a limit: $roguelike [number]`)
+            return;
+        } else {
+            axios.get(urlGene+"action_rogue_like").then(response => response.data)
+            .then(body => {
+                
+                const $ = cheerio.load(body);
+                const gameNames = $('.tab_item_name');
+                const pictureGames = $('.tab_item_cap_img');
+                const priceGames = $('.discount_final_price');
+                
+                gameNames.each((index, gameName) => {
+                    games.push({ gameName: $(gameName).text(), priceGames: $(priceGames[index]).text(), pictureGames: $(pictureGames[index]).attr('src') });
+                });
+
+                let limit = +stop;
+                let last = 0;
+                message.channel.send(`**These are the top ${limit}**`)
+                games.map(game => {
+                    if(last === limit){
+                        return;
+                    }
+                    last++;
+                    const msg = `**Title:** ${game.gameName}\n**Price:** ${game.priceGames}\n**Image:** ${game.pictureGames}\n`;
+                    message.channel.send(msg)
+                    return;
+                })
+                
             });
         }
         
     }
 })
 
-bot.login("ODM4MDE1ODU0OTMwNTU4OTc2.YI09FQ.R6RNh28Vz-Q-WfukWQrjrdWNXP8")
+bot.login("AQUI TOKEN")
