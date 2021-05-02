@@ -96,4 +96,4 @@ bot.on("message", async message => {
     }
 })
 
-bot.login("ODM4MDE1ODU0OTMwNTU4OTc2.YI09FQ.2yASz3i3zB0P2zBJ4dzGp9f8xsM")
+bot.login("TOKEN")
