@@ -42,14 +42,15 @@ bot.on("message", async message => {
 
                 let limit = +stop;
                 let last = 0;
-                message.channel.send(`**These are the top ${limit}**`);
+                message.channel.send(`**:warning:  These are the top ${limit} :warning: **`);
                 games.map(game => {
                     if(last === limit){
                         return;
                     }
                     last++;
-                    const msg = `**Title:** ${game.gameName}\n**Price:** ${game.priceGames}\n**Image:** ${game.pictureGames}\n`;
+                    const msg = `:video_game: **Title:** ${game.gameName}  :video_game:\n \t  **Price:** ${game.priceGames} :moneybag: \n  \t **Image:** ${game.pictureGames}\n`;
                     message.channel.send(msg)
+                    games = [];
                     return;
                 })
                 // message.channel.send(`These are the top ${limit}`)
@@ -77,13 +78,14 @@ bot.on("message", async message => {
 
                 let limit = +stop;
                 let last = 0;
-                message.channel.send(`**These are the top ${limit}**`)
+                message.channel.send(`**:warning:  These are the top ${limit} :warning: **`)
                 games.map(game => {
                     if(last === limit){
                         return;
                     }
                     last++;
-                    const msg = `**Title:** ${game.gameName}\n**Price:** ${game.priceGames}\n**Image:** ${game.pictureGames}\n`;
+                    const msg = `**Title:** ${game.gameName} :video_game:\n**Price:** ${game.priceGames} :moneybag:\n**Image:** ${game.pictureGames}\n`;
+                    games = [];
                     message.channel.send(msg)
                     return;
                 })
@@ -94,4 +96,4 @@ bot.on("message", async message => {
     }
 })
 
-bot.login("token")
+bot.login("ODM4MDE1ODU0OTMwNTU4OTc2.YI09FQ.2yASz3i3zB0P2zBJ4dzGp9f8xsM")
