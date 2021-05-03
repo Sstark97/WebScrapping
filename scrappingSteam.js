@@ -21,50 +21,45 @@ bot.on("message", async message => {
 
     if (command === "help") {
         message.reply(`:man_raising_hand:`);
-        message.channel.send( "**Hola! Tu bot está esperando un comando.**\n¿Tienes dudas?\n Para usarlos solo tienes que:\n$action [number]\n$roguelike [number]")
+        message.channel.send( "**Hola! Tu bot está esperando un comando.**\n¿Tienes dudas?\n Para usarlos solo tienes que:\n$action [number]\n$roguelike [number]\n$rol [number]")
         return;
     } else if (command === "action") {
-        console.log(stop);
+        console.log("stop:" + stop);
         if(typeof stop === 'undefined'){
             message.channel.send(`Introduce a limit: $action [number]`)
             return;
         } else {
-            axios.get(urlGene+"action").then(response => response.data)
-            .then(body => {
-                const $ = cheerio.load(body);
-                const gameNames = $('.tab_item_name');
-                const pictureGames = $('.tab_item_cap_img');
-                const priceGames = $('.discount_final_price');
-                
-                gameNames.each((index, gameName) => {
-                    games.push({ gameName: $(gameName).text(), priceGames: $(priceGames[index]).text(), pictureGames: $(pictureGames[index]).attr('src') });
-                });
-
-                let limit = +stop;
-                let last = 0;
-                message.channel.send(`**:warning:  These are the top ${limit} :warning: **`);
-                games.map(game => {
-                    if(last === limit){
-                        return;
-                    }
-                    last++;
-                    const msg = `:video_game: **Title:** ${game.gameName}  :video_game:\n \t  **Price:** ${game.priceGames} :moneybag: \n  \t **Image:** ${game.pictureGames}\n`;
-                    message.channel.send(msg)
-                    games = [];
-                    return;
-                })
-                // message.channel.send(`These are the top ${limit}`)
-                // return;
-            });
+            getGames("action", stop, message);
         }
         
     }else if (command === "roguelike") {
-        console.log(stop);
+        console.log("stop:" + stop);
         if(typeof stop === 'undefined'){
             message.channel.send(`Introduce a limit: $roguelike [number]`)
             return;
         } else {
-            axios.get(urlGene+"action_rogue_like").then(response => response.data)
+        getGames("action_rogue_like", stop, message);
+        }
+        
+    }else if (command === "rol") {
+        console.log("stop:" + stop);
+        if(typeof stop === 'undefined'){
+            message.channel.send(`Introduce a limit: $rol [number]`)
+            return;
+        } else {
+            getGames("rpg", stop, message);
+        }
+        
+    }// else if (command != "rol" && command != "action" && command != "roguelike" ){ //no funciona
+    //    console.log(  stop);
+    //    message.reply(`:man_raising_hand:`);
+    //    message.channel.send( "**Hola! Tu bot está esperando un comando.**\n¿Tienes dudas?\n Para usarlos solo tienes que:\n$action [number]\n$roguelike [number]\n$rol [number]")
+    //    return;
+    //}
+})
+
+function getGames(section, num, message) {
+    axios.get(urlGene+section).then(response => response.data)
             .then(body => {
                 
                 const $ = cheerio.load(body);
@@ -76,7 +71,7 @@ bot.on("message", async message => {
                     games.push({ gameName: $(gameName).text(), priceGames: $(priceGames[index]).text(), pictureGames: $(pictureGames[index]).attr('src') });
                 });
 
-                let limit = +stop;
+                let limit = +num;
                 let last = 0;
                 message.channel.send(`**:warning:  These are the top ${limit} :warning: **`)
                 games.map(game => {
@@ -91,9 +86,6 @@ bot.on("message", async message => {
                 })
                 
             });
-        }
-        
-    }
-})
+}
 
-bot.login("TOKEN")
+bot.login("token"); 
