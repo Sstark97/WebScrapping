@@ -6,6 +6,7 @@ const urlGene = "https://store.steampowered.com/category/";
 const category = process.argv[1]
 let games = [];
 
+
 const bot = new disc.Client();
 
 bot.on("ready", () => {
@@ -22,7 +23,6 @@ bot.on("message", async message => {
         message.channel.send("**Hola! Tu bot está perfectamente recibiendo mensajes.**\n¿Tienes dudas sobre como modificarlo más? Visita la documentación: https://scripthubteam.github.io/docs/#/js/discord-js")
         return;
     } else if (command === "action") {
-        console.log(stop);
         if(typeof stop === 'undefined'){
             message.channel.send(`Introduce a limit: $action [number]`)
             return;
@@ -56,7 +56,6 @@ bot.on("message", async message => {
         }
         
     }else if (command === "roguelike") {
-        console.log(stop);
         if(typeof stop === 'undefined'){
             message.channel.send(`Introduce a limit: $roguelike [number]`)
             return;
@@ -75,7 +74,7 @@ bot.on("message", async message => {
 
                 let limit = +stop;
                 let last = 0;
-                message.channel.send(`**These are the top ${limit}**`)
+                message.channel.send(`**These are the top ${limit}**`) 
                 games.map(game => {
                     if(last === limit){
                         return;
@@ -92,4 +91,4 @@ bot.on("message", async message => {
     }
 })
 
-bot.login("AQUI TOKEN")
+bot.login("")
