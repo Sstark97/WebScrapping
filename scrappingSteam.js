@@ -84,4 +84,4 @@ function cardGame(gameName,priceGames,pictureGames) {
 
 }
 
-bot.login("ODM4MDE1ODU0OTMwNTU4OTc2.YI09FQ.r4cnwH02ty1ybMce5wCF6EEgxlw")
+bot.login("")
