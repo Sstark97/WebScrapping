@@ -29,7 +29,22 @@ bot.on("message", async message => {
             message.channel.send(`Introduce a limit: $action [number]`)
             return;
         } else {
-            axios.get(urlGene + "action").then(response => response.data)
+            getGames(command,stop,message);
+        }
+
+    } else if (command === "roguelike") {
+        if (typeof stop === 'undefined') {
+            message.channel.send(`Introduce a limit: $roguelike [number]`)
+            return;
+        } else {
+            getGames('action_rogue_like',stop,message);
+        }
+
+    }
+})
+
+function getGames(command,stop,message) {
+    axios.get(urlGene + command).then(response => response.data)
                 .then(body => {
                     const $ = cheerio.load(body);
                     const gameNames = $('.tab_item_name');
@@ -48,60 +63,25 @@ bot.on("message", async message => {
                             return;
                         }
                         last++;
-                        const msg = `**Title:** ${game.gameName}\n**Price:** ${game.priceGames}\n**Image:** ${game.pictureGames}\n`;
-                        message.channel.send(msg)
-                        return;
+                        const embed = cardGame(game.gameName,game.priceGames,game.pictureGames);
+                        message.channel.send(embed)
+                        return 
                     })
-                    // message.channel.send(`These are the top ${limit}`)
-                    // return;
                 });
-        }
+    
+}
 
-    } else if (command === "roguelike") {
-        if (typeof stop === 'undefined') {
-            message.channel.send(`Introduce a limit: $roguelike [number]`)
-            return;
-        } else {
-            axios.get(urlGene + "action_rogue_like").then(response => response.data)
-                .then(body => {
+function cardGame(gameName,priceGames,pictureGames) {
+    const embed = new MessageEmbed()
+        // Set the title of the field
+        .setTitle(gameName)
+        .setImage(pictureGames)
+        // Set the color of the embed
+        .setColor(0xff0000)
+        // Set the main content of the embed
+        .setDescription('Price: '+priceGames);
+    return embed;
 
-                    const $ = cheerio.load(body);
-                    const gameNames = $('.tab_item_name');
-                    const pictureGames = $('.tab_item_cap_img');
-                    const priceGames = $('.discount_final_price');
+}
 
-                    gameNames.each((index, gameName) => {
-                        games.push({ gameName: $(gameName).text(), priceGames: $(priceGames[index]).text(), pictureGames: $(pictureGames[index]).attr('src') });
-                    });
-
-                    let limit = +stop;
-                    let last = 0;
-                    message.channel.send(`**These are the top ${limit}**`)
-                    games.map(game => {
-                        if (last === limit) {
-                            return;
-                        }
-                        last++;
-                        const msg = `**Title:** ${game.gameName}\n**Price:** ${game.priceGames}\n**Image:** ${game.pictureGames}\n`;
-                        message.channel.send(msg)
-                        return;
-                    })
-
-                });
-        }
-
-    } else if (command === "prueba"){
-        const embed = new MessageEmbed()
-            // Set the title of the field
-            .setTitle('A slick little embed')
-            // Set the color of the embed
-            .setColor(0xff0000)
-            // Set the main content of the embed
-            .setDescription('Hello, this is a slick embed!');
-        // Send the embed to the same channel as the message
-        message.channel.send(embed)
-        return;
-    }
-})
-
-bot.login("")
+bot.login("ODM4MDE1ODU0OTMwNTU4OTc2.YI09FQ.r4cnwH02ty1ybMce5wCF6EEgxlw")
