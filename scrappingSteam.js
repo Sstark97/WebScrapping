@@ -1,35 +1,87 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const fs = require('fs');
+const disc = require('discord.js');
 
-const urlWeb = 'https://store.steampowered.com/games/?l=latam#p=1&tab=NewReleases';
-const url2 = 'https://store.steampowered.com/search/?sort_by=Released_DESC&tags=-1&category1=998,996';
-let names1 = [];
-let names2 = [];
+const { Client, MessageEmbed } = require('discord.js');
 
-axios.get(urlWeb).then(response => response.data)
-                 .then(body => {
-                     const $ = cheerio.load(body);
-                     const elements = $('.tab_item_name');
-                     elements.each((index,element) => {
-                         names1.push($(element).text());
-                     });
-                     console.log(JSON.stringify(names1));
-                     fs.writeFile('datos.json',JSON.stringify(names1),{encoding:'utf-8'},(err) =>{
-                         console.log(err);
-                     });
-                 });
+const urlGene = "https://store.steampowered.com/category/";
+const category = process.argv[1]
+let games = [];
 
 
-axios.get(url2).then(response => response.data)
-                 .then(body => {
-                     const $ = cheerio.load(body);
-                     const elements = $('.title');
-                     elements.each((index,element) => {
-                         names2.push($(element).text());
-                     });
-                     console.log(names2);
-                    //  fs.writeFile('datos2.json',JSON.stringify(names2),{encoding:'utf-8'},(err) =>{
-                    //     console.log(err);
-                    // });
-                 })
+const bot = new disc.Client();
+
+bot.on("ready", () => {
+    console.log("Tu bot (" + bot.user.tag + ") ahora se encuentra en línea!")
+})
+
+bot.on("message", async message => {
+    const prefix = "$";
+    const args = message.content.slice(prefix.length).trim().split(/ +/g);
+    const command = args.shift().toLowerCase();
+    const stop = args.pop();
+
+    if (command === "help") {
+        message.channel.send("**Hola! Tu bot está perfectamente recibiendo mensajes.**\n¿Tienes dudas sobre como modificarlo más? Visita la documentación: https://scripthubteam.github.io/docs/#/js/discord-js")
+        return;
+    } else if (command === "action") {
+        if (typeof stop === 'undefined') {
+            message.channel.send(`Introduce a limit: $action [number]`)
+            return;
+        } else {
+            getGames(command,stop,message);
+        }
+
+    } else if (command === "roguelike") {
+        if (typeof stop === 'undefined') {
+            message.channel.send(`Introduce a limit: $roguelike [number]`)
+            return;
+        } else {
+            getGames('action_rogue_like',stop,message);
+        }
+
+    }
+})
+
+function getGames(command,stop,message) {
+    axios.get(urlGene + command).then(response => response.data)
+                .then(body => {
+                    const $ = cheerio.load(body);
+                    const gameNames = $('.tab_item_name');
+                    const pictureGames = $('.tab_item_cap_img');
+                    const priceGames = $('.discount_final_price');
+
+                    gameNames.each((index, gameName) => {
+                        games.push({ gameName: $(gameName).text(), priceGames: $(priceGames[index]).text(), pictureGames: $(pictureGames[index]).attr('src') });
+                    });
+
+                    let limit = +stop;
+                    let last = 0;
+                    message.channel.send(`**These are the top ${limit}**`);
+                    games.map(game => {
+                        if (last === limit) {
+                            return;
+                        }
+                        last++;
+                        const embed = cardGame(game.gameName,game.priceGames,game.pictureGames);
+                        message.channel.send(embed)
+                        return 
+                    })
+                });
+    
+}
+
+function cardGame(gameName,priceGames,pictureGames) {
+    const embed = new MessageEmbed()
+        // Set the title of the field
+        .setTitle(gameName)
+        .setImage(pictureGames)
+        // Set the color of the embed
+        .setColor(0xff0000)
+        // Set the main content of the embed
+        .setDescription('Price: '+priceGames);
+    return embed;
+
+}
+
+bot.login("");
