@@ -84,4 +84,4 @@ function cardGame(gameName,priceGames,pictureGames) {
 
 }
 
-bot.login("")
+bot.login("");
