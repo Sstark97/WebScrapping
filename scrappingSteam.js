@@ -20,16 +20,18 @@ bot.on("message", async message => {
     const args = message.content.slice(prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
     const stop = args.pop();
+    
 
     if (command === "help") {
-        message.channel.send("**Hola! Tu bot está perfectamente recibiendo mensajes.**\n¿Tienes dudas sobre como modificarlo más? Visita la documentación: https://scripthubteam.github.io/docs/#/js/discord-js")
+        message.reply(`:man_raising_hand:`);
+        message.channel.send( "**Hola! Tu bot está esperando un comando.**\n¿Tienes dudas?\n Para usarlos solo tienes que:\n$action [number]\n$roguelike [number]\n$rol [number]")
         return;
     } else if (command === "action") {
         if (typeof stop === 'undefined') {
             message.channel.send(`Introduce a limit: $action [number]`)
             return;
         } else {
-            getGames(command,stop,message);
+            getGames("action",stop,message);
         }
 
     } else if (command === "roguelike") {
@@ -40,6 +42,13 @@ bot.on("message", async message => {
             getGames('action_rogue_like',stop,message);
         }
 
+    }else if (command === "rol") {
+        if(typeof stop === 'undefined'){
+            message.channel.send(`Introduce a limit: $rol [number]`)
+            return;
+        } else {
+            getGames("rpg", stop, message);
+        }
     }
 })
 
@@ -57,13 +66,14 @@ function getGames(command,stop,message) {
 
                     let limit = +stop;
                     let last = 0;
-                    message.channel.send(`**These are the top ${limit}**`);
+                    message.channel.send(`**:warning: These are the top ${limit} **:warning:`);
                     games.map(game => {
                         if (last === limit) {
                             return;
                         }
                         last++;
                         const embed = cardGame(game.gameName,game.priceGames,game.pictureGames);
+                        games = [];
                         message.channel.send(embed)
                         return 
                     })
@@ -74,12 +84,12 @@ function getGames(command,stop,message) {
 function cardGame(gameName,priceGames,pictureGames) {
     const embed = new MessageEmbed()
         // Set the title of the field
-        .setTitle(gameName)
+        .setTitle(":video_game: " + gameName + " :video_game:")
         .setImage(pictureGames)
         // Set the color of the embed
         .setColor(0xff0000)
         // Set the main content of the embed
-        .setDescription('Price: '+priceGames);
+        .setDescription('Price: '+priceGames + " :moneybag:");
     return embed;
 
 }
